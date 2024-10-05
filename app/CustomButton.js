@@ -2,12 +2,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './CustomButton.css';
+import { Button } from '@mui/material';
 
-const CustomButton = ({ label, onClick, style }) => {
+const CustomButton = ({ id, label, onClick, style }) => {
   return (
-    <button className="custom-button" onClick={onClick} style={style}>
+    <Button className="custom-button" onClick={onClick} style={style} id={id}>
       {label}
-    </button>
+    </Button>
   );
 };
 
