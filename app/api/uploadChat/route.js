@@ -1,71 +1,62 @@
 import { NextResponse } from "next/server";
 import { Pinecone } from "@pinecone-database/pinecone";
-import { ServerlessSpec } from "@pinecone-database/pinecone/dist/specs";
-import { OpenAI } from "openai"
+import { OpenAI } from "openai";
 
 export async function POST(req) {
-    const { user_id, chat_history } = await req.json();
+    try {
+        const { user_id, chat_history } = await req.json();
 
-    // Get URL
-    const url = req.headers.get('URL')
-    
-    // Get openai client
-    const openai_client = new OpenAI()
-
-    // Get pinecone client
-    const pc = new Pinecone({
-        apiKey: process.env.PINECONE_API_KEY,
-    })
-
-    // Create index if it doesn't exist
-    target_idx = "CHAT_HISTORY"
-
-    if (!("chat_history" in pc.listIndexes().names())) {
-        pc.createIndex({
-            name: target_idx,
-            dimension: 1536,
-            metric: "cosine",
-            spec=ServerlessSpec(
-                cloud: "aws",
-                region: "us-east-1",
-            )
+        // Get openai client
+        const openai_client = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY, // Make sure this is set
         });
-    }
 
-    const chatHist_idx = pc.Index(target_idx);
-    
-    // Create embedding for chat history
-    const embedding = await fetch(url + "/api/embeddings", {
-        method: "POST",
-        body: JSON.stringify({ text: chat_history, openai_client: openai_client }),
-    });
+        // Get pinecone client
+        const pc = new Pinecone({
+            apiKey: process.env.PINECONE_API_KEY
+        });
 
-    // Format and upsert to pinecone
-    const vector = []
+        // Get the index
+        const target_idx = "chat-history";
+        const chatHist_idx = pc.index(target_idx);
 
-    vector.append({
-        "values": embedding,
-        "date": new Date().toISOString(),
-        "mood": "neutral",
-        "metadata": {
-            "chat_history": chat_history
-        }
-    })
+        // Create embedding for chat history
+        const response = await openai_client.embeddings.create({
+            input: chat_history,
+            model: "text-embedding-3-small",
+        });
 
-    chatHist_idx.upsert(
-        vectors = vector,
-        namespace = `user_${user_id}`
-    )
-    
-    if (vector) {
+        const embedding = response.data[0].embedding;
+
+        //console.log("embedding", embedding);
+
+        // Format and upsert to pinecone
+        const upsertResponse = await chatHist_idx.namespace(`user_${user_id}`).upsert([
+            {
+                id: `${user_id}-${Date.now()}`,
+                values: embedding,
+                metadata: {
+                    user_id,
+                    chat_history,
+                    timestamp: new Date().toISOString(),
+                    mood: "neutral",
+                }
+            }
+        ]);
+
+       // console.log('Upsert response:', upsertResponse);
+
         return NextResponse.json({
             success: true,
-            message: "Your journal entry has been saved!"
+            message: "Your chat history has been saved!"
         }, { status: 200 });
-    } else {
+
+    } catch (error) {
+        console.error('Error in uploadChat:', error);
         return NextResponse.json({ 
             success: false,
-            message: "Your journal entry could not be saved."
-        }, { status: 400 });
+            message: "Your chat history could not be saved.",
+            error: error.message
+        }, { status: 500 });
     }
 }

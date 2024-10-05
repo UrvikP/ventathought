@@ -15,6 +15,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { Button as MuiButton } from "@mui/material"; // Add this import
+import { useUser } from '@auth0/nextjs-auth0/client';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { 
   Drawer, 
@@ -30,6 +32,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 export default function Home() {
     const [currentURL, setCurrentURL] = useState('');
+    const { user, error, isLoading } = useUser();
 
     useEffect(() => {
         setCurrentURL(window.location.href);
@@ -42,7 +45,7 @@ export default function Home() {
       }
     ])
     const [message, setMessage ] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
+    const [isChatLoading, setIsChatLoading] = useState(false)
     const [darkMode, setDarkMode] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
@@ -75,6 +78,7 @@ export default function Home() {
         { role: 'user', content: message },
         { role: 'assistant', content: '' },
       ])
+      setIsChatLoading(true)
 
       try {
         const response = await fetch('/api/chat', {
@@ -119,7 +123,7 @@ export default function Home() {
           },
         ])
       } finally {
-        setIsLoading(false)
+        setIsChatLoading(false)
       }
     }
 
@@ -232,6 +236,20 @@ export default function Home() {
     };
   
     const endChat = async () => {
+      console.log("End Chat clicked");
+      if (isChatLoading || isLoading) {
+        console.log("Loading in progress, can't end chat");
+        return;
+      }
+      if (error) {
+        console.error('Error loading user:', error);
+        return;
+      }
+      if (!user) {
+        console.log('User not authenticated, ending chat anyway');
+        // You might want to handle this case differently
+      }
+
       const chatHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
       
       try {
@@ -242,7 +260,7 @@ export default function Home() {
             'URL': currentURL,
           },
           body: JSON.stringify({
-            user_id: userId,
+            user_id: user ? user.sub : 'anonymous',
             chat_history: chatHistory,
           }),
         });
@@ -261,7 +279,6 @@ export default function Home() {
             content: `Hey there! What's on your mind today?`
           }
         ]);
-        setUserId(Math.random().toString(36).substr(2, 9));
       } catch (error) {
         console.error('Error ending chat:', error);
         alert('Failed to save chat history. Please try again.');
@@ -327,6 +344,7 @@ export default function Home() {
                 color="secondary"
                 onClick={endChat}
                 sx={{ mr: 2 }}
+                disabled={isChatLoading || isLoading}
               >
                 End Chat
               </MuiButton>
@@ -384,7 +402,7 @@ export default function Home() {
                   </Box>
                 </Box>
               ))}
-              {isLoading && (
+              {isChatLoading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                   <CircularProgress />
                 </Box>
@@ -411,7 +429,7 @@ export default function Home() {
                 variant="contained" 
                 endIcon={<SendIcon />}
                 type="submit"
-                disabled={isLoading}
+                disabled={isChatLoading}
               >
                 Send
               </Button>
