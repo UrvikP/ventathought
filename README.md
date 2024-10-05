@@ -5,7 +5,7 @@ npm install
 look in installations.md for the necessary dependencies to install. Copy and paste command into terminal.
 
 Add in a .env.local file with the following:
-For Auth0:
+For Auth0: https://auth0.com/docs/get-started/set-up-auth0
 AUTH0_SECRET=
 AUTH0_BASE_URL=
 AUTH0_ISSUER_BASE_URL=
