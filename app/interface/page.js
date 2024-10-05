@@ -17,6 +17,17 @@ import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { Button as MuiButton } from "@mui/material"; // Add this import
 
+import { 
+  Drawer, 
+  List, 
+  ListItem, 
+  ListItemText, 
+  AppBar, 
+  Toolbar, 
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+
 
 export default function Home() {
     const [currentURL, setCurrentURL] = useState('');
@@ -28,7 +39,7 @@ export default function Home() {
     const [messages, setMessages] = useState([
       {
         role: 'assistant',
-        content: `Hello. I am a AI chat bot impersonating Donald Trump. Let's talk!`
+        content: `Hey there! What's on your mind today?`
       }
     ])
     const [message, setMessage ] = useState('')
@@ -248,7 +259,7 @@ export default function Home() {
         setMessages([
           {
             role: 'assistant',
-            content: `Hello. I am a AI chat bot impersonating Donald Trump. Let's talk!`
+            content: `Hey there! What's on your mind today?`
           }
         ]);
         setUserId(Math.random().toString(36).substr(2, 9));
@@ -257,10 +268,48 @@ export default function Home() {
         alert('Failed to save chat history. Please try again.');
       }
     };
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleSidebar = () => setIsOpen(!isOpen);
 
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={toggleSidebar}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6">
+            VentAThought
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="persistent"
+        anchor="left"
+        open={isOpen}
+      >
+        <Box sx={{ width: 250 }}>
+          <IconButton onClick={toggleSidebar}>
+            <ChevronLeftIcon />
+          </IconButton>
+          <List>
+            {['Item 1', 'Item 2', 'Item 3'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+    </>
         <Box 
           sx={{
             width: "100vw",
@@ -270,8 +319,9 @@ export default function Home() {
             bgcolor: "background.default"
           }}
         >
+
           <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h5">Donald Trump Emulator</Typography>
+            <Typography variant="h5">VentAThought</Typography>
             <Box>
               <MuiButton
                 variant="outlined"
