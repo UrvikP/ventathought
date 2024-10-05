@@ -28,7 +28,12 @@ Emulate his communication style rather than providing fully accurate information
 `
 
 export async function POST(req){
-    const openai = new OpenAI()
+    // Get openai client
+    const openai_client = await fetch("/api/getOpenAI", {
+        method: "POST",
+    })
+
+    // Get user message
     const data = await req.json()
 
     const completion = await openai.chat.completions.create({
