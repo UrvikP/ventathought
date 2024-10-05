@@ -2,11 +2,18 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Image from "next/image";
-
+import CustomButton from './CustomButton';
+import React from "react";
 
 
 export default function Home() {
-  const {user, error, isLoading} = useUser();
+  const { user, error, isLoading } = useUser();
+
+  const handleClick = () => {
+    // Add your click handling logic here
+    console.log("Button clicked!");
+    window.location.href = '/interface';
+  };
 
   if (isLoading) {
     return <Typography>Loading...</Typography>; // Show a loading message while checking authentication
@@ -18,21 +25,18 @@ export default function Home() {
 
   return (
     <Box>
-      <Typography variant="h2" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
-                    Text
-      </Typography>
-                  <Box display="flex" justifyContent="center">
-                  <Button color="inherit" href="/api/auth/logout">
-            logout
-          </Button>
-                  <Button 
-                    href="/api/auth/login" 
-                    variant="contained" 
-                  
-                  >
-                    login
-                  </Button>
-                  </Box>
+
+      <Box display="flex" justifyContent="center" alignItems="center" sx={{ gap: 2, height: '100vh' }}>
+        <Button color="inherit" href="/api/auth/logout">
+          Logout
+        </Button>
+
+        <CustomButton 
+          label="Vent" 
+          onClick={handleClick} 
+        />
+
+      </Box>
     </Box>
-  )
+  );
 }

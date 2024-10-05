@@ -2,6 +2,22 @@
 ## Getting Started
 First add the following dependencies:
 npm install
+look in installations.md for the necessary dependencies to install. Copy and paste command into terminal.
+
+Add in a .env.local file with the following:
+For Auth0: https://auth0.com/docs/get-started/set-up-auth0
+AUTH0_SECRET=
+AUTH0_BASE_URL=
+AUTH0_ISSUER_BASE_URL=
+AUTH0_CLIENT_ID=
+AUTH0_CLIENT_SECRET=
+
+For OpenAI: https://platform.openai.com/docs/concepts
+OPENAI_API_KEY=
+
+For AWS: https://aws.amazon.com
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
 
 First, run the development server:
 
@@ -31,6 +47,11 @@ To learn more about Next.js, take a look at the following resources:
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
+
+
+## Auth0
+
+https://auth0.com/docs/quickstart/webapp/nextjs/interactive
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
