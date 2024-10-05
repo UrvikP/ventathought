@@ -2,6 +2,22 @@
 ## Getting Started
 First add the following dependencies:
 npm install
+look in installations.md for the necessary dependencies to install. Copy and paste command into terminal.
+
+Add in a .env.local file with the following:
+For Auth0:
+AUTH0_SECRET=
+AUTH0_BASE_URL=
+AUTH0_ISSUER_BASE_URL=
+AUTH0_CLIENT_ID=
+AUTH0_CLIENT_SECRET=
+
+For OpenAI: https://platform.openai.com/docs/concepts
+OPENAI_API_KEY=
+
+For AWS: https://aws.amazon.com
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
 
 First, run the development server:
 
