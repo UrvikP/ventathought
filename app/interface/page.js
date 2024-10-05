@@ -16,6 +16,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { Button as MuiButton } from "@mui/material"; // Add this import
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material'; // Add these imports
 
 import { 
   Drawer, 
@@ -48,6 +49,27 @@ export default function Home() {
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
+    const [selectedVoice, setSelectedVoice] = useState('alloy');
+    const [voices, setVoices] = useState([]);
+
+    useEffect(() => {
+      async function fetchVoices() {
+        try {
+          const response = await fetch('/api/voices');
+          if (!response.ok) {
+            throw new Error('Failed to fetch voices');
+          }
+          const voicesData = await response.json();
+          setVoices(voicesData);
+          if (voicesData.length > 0) {
+            setSelectedVoice(voicesData[0].id);
+          }
+        } catch (error) {
+          console.error('Error fetching voices:', error);
+        }
+      }
+      fetchVoices();
+    }, []);
 
     const theme = createTheme({
       palette: {
@@ -148,22 +170,27 @@ export default function Home() {
 
     const synthesizeSpeech = async (text) => {
       try {
+        console.log('Synthesizing speech for:', text);
         const response = await fetch('/api/tts', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text, voice: selectedVoice }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const audioBlob = await response.blob();
+        console.log('Received audio blob:', audioBlob);
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
-        audio.play();
+        audio.onerror = (e) => console.error('Audio playback error:', e);
+        audio.onplay = () => console.log('Audio started playing');
+        audio.onended = () => console.log('Audio finished playing');
+        await audio.play();
       } catch (error) {
         console.error('Error synthesizing speech:', error);
       }
@@ -323,6 +350,18 @@ export default function Home() {
           <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5">VentAThought</Typography>
             <Box>
+              <FormControl variant="outlined" size="small" sx={{ mr: 2, minWidth: 120 }}>
+                <InputLabel id="voice-select-label">Voice</InputLabel>
+                <Select
+                  labelId="voice-select-label"
+                  value={selectedVoice}
+                  onChange={(e) => setSelectedVoice(e.target.value)}
+                  label="Voice"
+                >
+                  <MenuItem value="alloy">Alloy</MenuItem>
+                  <MenuItem value="nova">Nova</MenuItem>
+                </Select>
+              </FormControl>
               <MuiButton
                 variant="outlined"
                 color="secondary"
