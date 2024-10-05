@@ -1,1 +1,1 @@
-npm install @aws-sdk/client-polly @mui/material @mui/icons-material react-markdown react-syntax-highlighter @emotion/react @emotion/styled openai @auth0/nextjs-auth0
+npm install @aws-sdk/client-polly @mui/material @mui/icons-material react-markdown react-syntax-highlighter @emotion/react @emotion/styled openai @auth0/nextjs-auth0 @pinecone-database/pinecone
