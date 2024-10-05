@@ -1,0 +1,61 @@
+/* <!-- HTML !--> */
+/* <button class="button-56" role="button">Button 56</button> */
+
+/* CSS */
+.custom-button {
+  align-items: center;
+  background-color: #8e8dee;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  font-family: Inter,sans-serif;
+  font-size: 24px;
+  height: 80px;
+  justify-content: center;
+  line-height: 24px;
+  max-width: 300px;
+  padding: 0 40px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.custom-button:after {
+  background-color: #111;
+  border-radius: 8px;
+  content: "";
+  display: block;
+  height: 80px;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  top: -2px;
+  transform: translate(8px, 8px);
+  transition: transform .2s ease-out;
+  z-index: -1;
+}
+
+.custom-button:hover:after {
+  transform: translate(0, 0);
+}
+
+.custom-button:active {
+  background-color: #ffdeda;
+  outline: 0;
+}
+
+.custom-button:hover {
+  outline: 0;
+}
+
+@media (min-width: 768px) {
+  .custom-button {
+    padding: 0 40px;
+  }
+}
