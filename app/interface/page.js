@@ -81,13 +81,17 @@ export default function Home() {
       setIsChatLoading(true)
 
       try {
+        console.log("")
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'URL': currentURL,
           },
-          body: JSON.stringify([...messages, { role: 'user', content: message }]),
+          body: JSON.stringify({
+            user_id: user ? user.sub : 'anonymous',
+            data: [...messages, { role: 'user', content: message }],
+          })
         });
 
         if (!response.ok) {
