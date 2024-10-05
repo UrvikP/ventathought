@@ -15,8 +15,16 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import { Button as MuiButton } from "@mui/material"; // Add this import
+
 
 export default function Home() {
+    const [currentURL, setCurrentURL] = useState('');
+
+    useEffect(() => {
+        setCurrentURL(window.location.href);
+    }, []);
+
     const [messages, setMessages] = useState([
       {
         role: 'assistant',
@@ -28,6 +36,7 @@ export default function Home() {
     const [darkMode, setDarkMode] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
+    const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
 
     const theme = createTheme({
       palette: {
@@ -62,6 +71,7 @@ export default function Home() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'URL': currentURL,
           },
           body: JSON.stringify([...messages, { role: 'user', content: message }]),
         });
@@ -211,6 +221,43 @@ export default function Home() {
       }
     };
   
+    const endChat = async () => {
+      const chatHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
+      
+      try {
+        const response = await fetch('/api/uploadChat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'URL': currentURL,
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            chat_history: chatHistory,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload chat history');
+        }
+
+        const result = await response.json();
+        alert(result.message);
+
+        // Reset the chat
+        setMessages([
+          {
+            role: 'assistant',
+            content: `Hello. I am a AI chat bot impersonating Donald Trump. Let's talk!`
+          }
+        ]);
+        setUserId(Math.random().toString(36).substr(2, 9));
+      } catch (error) {
+        console.error('Error ending chat:', error);
+        alert('Failed to save chat history. Please try again.');
+      }
+    };
+
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -225,7 +272,17 @@ export default function Home() {
         >
           <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5">Donald Trump Emulator</Typography>
-            <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+            <Box>
+              <MuiButton
+                variant="outlined"
+                color="secondary"
+                onClick={endChat}
+                sx={{ mr: 2 }}
+              >
+                End Chat
+              </MuiButton>
+              <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+            </Box>
           </Box>
           <Paper 
             elevation={3}

@@ -5,15 +5,16 @@ import { OpenAI } from "openai"
 
 export async function POST(req) {
     const { user_id, chat_history } = await req.json();
+
+    // Get URL
+    const url = req.headers.get('URL')
     
     // Get openai client
-    const openai_client = await fetch("/api/getOpenAI", {
-        method: "POST",
-    })
+    const openai_client = new OpenAI()
 
     // Get pinecone client
-    const pc = await fetch("/api/getPinecone", {
-        method: "POST",
+    const pc = new Pinecone({
+        apiKey: process.env.PINECONE_API_KEY,
     })
 
     // Create index if it doesn't exist
@@ -34,7 +35,7 @@ export async function POST(req) {
     const chatHist_idx = pc.Index(target_idx);
     
     // Create embedding for chat history
-    const embedding = await fetch("/api/embeddings", {
+    const embedding = await fetch(url + "/api/embeddings", {
         method: "POST",
         body: JSON.stringify({ text: chat_history, openai_client: openai_client }),
     });
