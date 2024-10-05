@@ -7,6 +7,7 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendIcon from '@mui/icons-material/Send';
+import MicIcon from '@mui/icons-material/Mic'; // Add this import
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
@@ -25,6 +26,7 @@ export default function Home() {
     const [message, setMessage ] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [darkMode, setDarkMode] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
 
     const theme = createTheme({
@@ -45,8 +47,8 @@ export default function Home() {
       },
     });
 
-      const sendMessage = async (e) => {
-        if (!message.trim()) return; 
+    const sendMessage = async (e) => {
+      if (!message.trim()) return; 
 
       setMessage('')
       setMessages((messages)=>[
@@ -99,28 +101,29 @@ export default function Home() {
       } finally {
         setIsLoading(false)
       }
-      const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text);
-        // You could add a toast notification here
-      };
-      
-      const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && e.shiftKey) {
-          e.preventDefault()
-          sendMessage()
-        }
-      }
-
-      const messagesEndRef = useRef(null)
-
-      const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-      }
-    
-      useEffect(() => {
-        scrollToBottom()
-      }, [messages])
     }
+
+    const copyToClipboard = (text) => {
+      navigator.clipboard.writeText(text);
+      // You could add a toast notification here
+    };
+    
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter' && e.shiftKey) {
+        e.preventDefault()
+        sendMessage()
+      }
+    }
+
+    const messagesEndRef = useRef(null)
+
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
+  
+    useEffect(() => {
+      scrollToBottom()
+    }, [messages])
 
     const synthesizeSpeech = async (text) => {
       try {
@@ -177,6 +180,36 @@ export default function Home() {
         )}
       </Box>
     );
+
+    const startListening = async () => {
+      setIsListening(true);
+      try {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => {
+          const speechResult = event.results[0][0].transcript;
+          setMessage(speechResult);
+        };
+
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          setIsListening(false);
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        recognition.start();
+      } catch (error) {
+        console.error('Error starting speech recognition:', error);
+        setIsListening(false);
+      }
+    };
   
     return (
       <ThemeProvider theme={theme}>
@@ -260,6 +293,14 @@ export default function Home() {
                 onChange={(e) => setMessage(e.target.value)}
                 sx={{ mr: 1 }}
               />
+              <IconButton
+                color="primary"
+                onClick={startListening}
+                disabled={isListening}
+                sx={{ mr: 1 }}
+              >
+                <MicIcon />
+              </IconButton>
               <Button 
                 variant="contained" 
                 endIcon={<SendIcon />}
