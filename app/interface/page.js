@@ -1,6 +1,5 @@
 'use client'
 
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
