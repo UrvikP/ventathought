@@ -1,23 +1,18 @@
 'use client'
 import React from 'react';
-import styles from './interface.module.css';
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendIcon from '@mui/icons-material/Send';
-import MicIcon from '@mui/icons-material/Mic'; // Add this import
+import MicIcon from '@mui/icons-material/Mic';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Button as MuiButton, CircularProgress } from "@mui/material"; // Add this import
-
+import { Button as MuiButton, CircularProgress } from "@mui/material";
 import { 
   Drawer, 
   List, 
@@ -28,7 +23,12 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-
+import { useRouter } from 'next/navigation';
+import LogoutIcon from '@mui/icons-material/Logout';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import ManIcon from '@mui/icons-material/Man';
+import WomanIcon from '@mui/icons-material/Woman';
 
 export default function Home() {
     const [currentURL, setCurrentURL] = useState('');
@@ -44,12 +44,10 @@ export default function Home() {
         content: `Hey there! What's on your mind today?`
       }
     ])
-    const [selectedVoice, setSelectedVoice] = useState('alloy'); // Add this line
     const [message, setMessage ] = useState('')
     const [isChatLoading, setIsChatLoading] = useState(false)
     const [darkMode, setDarkMode] = useState(false);
     const [isListening, setIsListening] = useState(false);
-    const isMobile = useMediaQuery('(max-width:600px)');
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
     //const [selectedVoice, setSelectedVoice] = useState('alloy');
 
@@ -115,11 +113,6 @@ export default function Home() {
       }
     }
 
-    const copyToClipboard = (text) => {
-      navigator.clipboard.writeText(text);
-      // You could add a toast notification here
-    };
-    
     const handleKeyPress = (e) => {
       if (e.key === 'Enter' && e.shiftKey) {
         e.preventDefault()
@@ -281,135 +274,149 @@ export default function Home() {
 
     const toggleSidebar = () => setIsOpen(!isOpen);
 
+    const router = useRouter();
+
+    const handleLogout = () => {
+        // Implement logout logic here
+        // For example, clear local storage, reset state, etc.
+        router.push('/'); // Redirect to page.js
+    };
+
     return (
-      <div className={styles.movingBackground}>
-      
+      <Box sx={{ display: 'flex', height: '100vh' }}>
         <CssBaseline />
       
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleSidebar}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6">
-            VentAThought
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={isOpen}
-      >
-        <Box sx={{ width: 250 }}>
-          <IconButton onClick={toggleSidebar}>
-            <ChevronLeftIcon />
-          </IconButton>
-          <List>
-            {['Item 1', 'Item 2', 'Item 3'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-      
-        <Box 
-          sx={{
-            width: "100vw",
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            bgcolor: "background.default"
-          }}
-        >
-
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h5">VentAThought</Typography>
-            <Box>
-              <FormControl variant="outlined" size="small" sx={{ mr: 2, minWidth: 120 }}>
-                <InputLabel id="voice-select-label">Voice</InputLabel>
-                <Select
-                  labelId="voice-select-label"
-                  value={selectedVoice}
-                  onChange={(e) => setSelectedVoice(e.target.value)}
-                  label="Voice"
-                >
-                  <MenuItem value="alloy">Vent</MenuItem>
-                  <MenuItem value="nova">Venta</MenuItem>
-                </Select>
-              </FormControl>
-              <MuiButton
-                variant="outlined"
-                color="secondary"
-                onClick={endChat}
-                sx={{ mr: 2 }}
-                disabled={isChatLoading || isLoading}
-              >
-                End Chat
-              </MuiButton>
-              <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
-            </Box>
-          </Box>
-          <Paper 
-            elevation={3}
+        <Box sx={{ 
+          position: 'fixed', 
+          left: 50, 
+          top: 50, 
+          bottom: 50, 
+          width: 380, 
+          zIndex: 1200,
+          boxShadow: 6, // Add shadow
+          borderRadius: 2, // Optional: rounds the corners
+          overflow: 'hidden' // Ensures content doesn't overflow rounded corners
+        }}>
+          <Drawer
+            variant="permanent"
             sx={{
-              flexGrow: 1,
-              width: isMobile ? "100%" : "90%",
-              maxWidth: "600px",
-              m: 'auto',
-              display: "flex",
-              flexDirection: "column",
-              p: 2,
-              overflow: "hidden",
-              bgcolor: "background.paper"
+              width: 380,
+              flexShrink: 0,
+              '& .MuiDrawer-paper': {
+                width: 380,
+                boxSizing: 'border-box',
+                position: 'static',
+                height: '100%',
+                borderRadius: 2, // Match the parent's border radius
+              },
             }}
           >
-            <Box sx={{ flexGrow: 1, overflow: "auto", mb: 2 }}>
+            <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="h6" sx={{ p: 2 }}>
+                VentAThought
+              </Typography>
+              
+              {/* Large avatars */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                <Avatar sx={{ width: 80, height: 80, mr: 2 }}>
+                  <ManIcon sx={{ fontSize: 60 }} />
+                </Avatar>
+                <Avatar sx={{ width: 80, height: 80 }}>
+                  <WomanIcon sx={{ fontSize: 60 }} />
+                </Avatar>
+              </Box>
+
+              <List>
+                {['Item 1', 'Item 2', 'Item 3'].map((text, index) => (
+                  <ListItem button key={text}>
+                    <ListItemText primary={text} />
+                  </ListItem>
+                ))}
+              </List>
+              
+              {/* Theme toggle and logout */}
+              <Box sx={{ marginTop: 'auto', p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
+                    {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+                  </IconButton>
+                  <Typography variant="body2">
+                    {darkMode ? 'Light Mode' : 'Dark Mode'}
+                  </Typography>
+                </Box>
+                <IconButton onClick={handleLogout} color="inherit">
+                  <LogoutIcon />
+                </IconButton>
+              </Box>
+            </Box>
+          </Drawer>
+        </Box>
+
+        <Box component="main" sx={{ 
+          flexGrow: 1, 
+          p: 3, 
+          pl: '430px', 
+          display: 'flex', 
+          flexDirection: 'column',
+          mt: '50px', // Add top margin
+          mx: '200px', // Add horizontal margin
+        }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <FormControl variant="outlined" size="small">
+              <InputLabel id="voice-select-label">Voice</InputLabel>
+              <Select
+                labelId="voice-select-label"
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+                label="Voice"
+              >
+                <MenuItem value="alloy">Vent</MenuItem>
+                <MenuItem value="nova">Venta</MenuItem>
+              </Select>
+            </FormControl>
+            <MuiButton
+              variant="outlined"
+              color="secondary"
+              onClick={endChat}
+              disabled={isChatLoading || isLoading}
+            >
+              End Chat
+            </MuiButton>
+          </Box>
+
+          <Paper sx={{ 
+            flexGrow: 1, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            overflow: 'hidden',
+            height: 'calc(100vh - 200px)', // Adjust height to account for top margin and padding
+          }}>
+            <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
               {messages.map((message, index) => (
-                <Box 
-                  key={index} 
-                  sx={{
-                    display: "flex",
-                    justifyContent: message.role === "assistant" ? "flex-start" : "flex-end",
-                    mb: 2,
-                  }}
-                >
-                  <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start", maxWidth: "80%" }}>
-                    {message.role === "assistant" && (
-                      <Avatar sx={{ bgcolor: "purple", mr: 1, mt: 3 }}>
+                <Box key={index} sx={{ display: 'flex', mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                    {message.role === "assistant" ? (
+                      <Avatar>
                         <SmartToyIcon />
                       </Avatar>
-                    )}
-
-                    <div className={styles.message}>
-                      {renderMessage(message)}
-                      <IconButton size="small" onClick={() => copyToClipboard(message.content)}>
-                        <ContentCopyIcon fontSize="small" />
-                      </IconButton>
-                    </div>
-
-                    {message.role === "user" && (
-                      <Avatar sx={{ bgcolor: "teal", ml: 1, mt: 1 }}>
+                    ) : (
+                      <Avatar>
                         <PersonIcon />
                       </Avatar>
                     )}
+                    <Box>
+                      {renderMessage(message)}
+                    </Box>
                   </Box>
                 </Box>
               ))}
               {isChatLoading && (
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
                   <CircularProgress />
                 </Box>
               )}
             </Box>
-            <Box component="form" onSubmit={(e) => { e.preventDefault(); sendMessage(); }} sx={{ display: "flex" }}>
+            <Box component="form" onSubmit={(e) => { e.preventDefault(); sendMessage(); }} sx={{ display: 'flex', p: 2 }}>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -422,7 +429,6 @@ export default function Home() {
                 color="primary"
                 onClick={startListening}
                 disabled={isListening}
-                sx={{ mr: 1 }}
               >
                 <MicIcon />
               </IconButton>
@@ -437,7 +443,6 @@ export default function Home() {
             </Box>
           </Paper>
         </Box>
-      
-      </div>
+      </Box>
     );
 }
