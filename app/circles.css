@@ -1,5 +1,7 @@
 /* Animated Circles CSS */
 
+
+
 .ring {
 	position: absolute;
 	bottom: 0;
@@ -263,6 +265,20 @@
 	border-radius: 50%;
 	background: rgba(255, 255, 255);
 	border: 18px rgb(255, 0, 255) solid;
+}
+
+.ring li:nth-child(22) {
+	left: 25%;
+    border: 1px rgb(255, 255, 255) solid;
+	width: 100px;
+	height: 100px;
+	animation-delay: 0s;
+	animation-duration: 8s;
+	border-radius: 50%;
+	/* border-top-left-radius: 0 !important; */
+	background-image: url('/images/venta.png'); /* Use your custom image */
+	background-size: cover; /* Ensure the image covers the entire area */
+	background-position: center; /* Center the image */
 }
 
 @keyframes animate {
