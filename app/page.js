@@ -62,12 +62,12 @@ setTimeout(() => {
 
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
       <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 1)', padding: 0, borderRadius: '50%', overflow: 'HideImageRounded'} } > {/* Added solid background */}
-              <Image
+              {/* <Image
                 src="/images/venta.png" // Replace with your image path
                 alt="Venta logo" // Replace with your image description
                 width={150} // Set the desired width
                 height={150} // Set the desired height
-              />
+              /> */}
             </Box>
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ gap: 1 }}>
           <Button color="inherit" href="/api/auth/logout">
