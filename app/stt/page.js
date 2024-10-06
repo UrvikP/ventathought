@@ -1,3 +1,5 @@
+'use client'
+
 import SpeechToText from '../components/SpeechToText';
 
 export default function Home() {
