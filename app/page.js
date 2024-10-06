@@ -36,8 +36,11 @@ setTimeout(() => {
   return (
     // className="gradient"
     // each li represents a ring
-    <Box height='100%'>
+    
+    <Box height='100%' sx={{ backgroundColor: 'rgba(226, 177, 69, .30)' }}>
       <ul class='ring'>
+        <li></li>
+        <li></li>
         <li></li>
         <li></li>
         <li></li>
@@ -70,9 +73,9 @@ setTimeout(() => {
               /> */}
             </Box>
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ gap: 1 }}>
-          <Button color="inherit" href="/api/auth/logout">
+          {/* <Button color="inherit" href="/api/auth/logout">
             Logout
-          </Button>
+          </Button> */}
 
           <CustomButton
             id="transitionButton"  
