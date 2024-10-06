@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react';
+import styles from './interface.module.css';
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
@@ -43,28 +45,12 @@ export default function Home() {
     ])
     const [message, setMessage ] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(true);
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
 
-    const theme = createTheme({
-      palette: {
-        mode: darkMode ? 'dark' : 'light',
-        background: {
-          default: darkMode ? '#121212' : '#f0f0f0',
-          paper: darkMode ? '#1e1e1e' : '#ffffff',
-        },
-        primary: {
-          main: darkMode ? '#90caf9' : '#1976d2',
-          light: darkMode ? '#4b5563' : '#e3f2fd',
-        },
-        secondary: {
-          main: darkMode ? '#f48fb1' : '#dc004e',
-          light: darkMode ? '#4a4a4a' : '#fce4ec',
-        },
-      },
-    });
+  
 
     const sendMessage = async (e) => {
       if (!message.trim()) return; 
@@ -230,7 +216,7 @@ export default function Home() {
         setIsListening(false);
       }
     };
-  
+  // end chat store the conversation to pinecone
     const endChat = async () => {
       const chatHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
       
@@ -272,9 +258,10 @@ export default function Home() {
     const toggleSidebar = () => setIsOpen(!isOpen);
 
     return (
-      <ThemeProvider theme={theme}>
+      <div className={styles.movingBackground}>
+      
         <CssBaseline />
-        <>
+      
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -308,7 +295,7 @@ export default function Home() {
           </List>
         </Box>
       </Drawer>
-    </>
+      
         <Box 
           sx={{
             width: "100vw",
@@ -359,25 +346,20 @@ export default function Home() {
                 >
                   <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start", maxWidth: "80%" }}>
                     {message.role === "assistant" && (
-                      <Avatar sx={{ bgcolor: "primary.main", mr: 1, mt: 1 }}>
+                      <Avatar sx={{ bgcolor: "purple", mr: 1, mt: 3 }}>
                         <SmartToyIcon />
                       </Avatar>
                     )}
-                    <Paper 
-                      elevation={1}
-                      sx={{
-                        p: 2,
-                        bgcolor: message.role === "assistant" ? "primary.light" : "secondary.light",
-                        color: theme.palette.getContrastText(message.role === "assistant" ? theme.palette.primary.light : theme.palette.secondary.light),
-                      }}
-                    >
+
+                    <div className={styles.message}>
                       {renderMessage(message)}
                       <IconButton size="small" onClick={() => copyToClipboard(message.content)}>
                         <ContentCopyIcon fontSize="small" />
                       </IconButton>
-                    </Paper>
+                    </div>
+
                     {message.role === "user" && (
-                      <Avatar sx={{ bgcolor: "secondary.main", ml: 1, mt: 1 }}>
+                      <Avatar sx={{ bgcolor: "teal", ml: 1, mt: 1 }}>
                         <PersonIcon />
                       </Avatar>
                     )}
@@ -418,6 +400,7 @@ export default function Home() {
             </Box>
           </Paper>
         </Box>
-      </ThemeProvider>
+      
+      </div>
     );
 }
