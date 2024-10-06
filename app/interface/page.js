@@ -51,6 +51,7 @@ export default function Home() {
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
+    const [selectedVoice, setSelectedVoice] = useState('alloy');
 
   
 
