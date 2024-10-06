@@ -428,7 +428,17 @@ export default function Home() {
                 flexDirection: 'column',
                 backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
               }}>
-                <Typography variant="h6" sx={{ p: 2 }}>
+                <Typography 
+                  variant="h4" 
+                  sx={{ 
+                    p: 2,
+                    ml: 2,
+                    fontFamily: "'Yatra One', cursive",
+                    fontSize: '2.5rem',
+                    color: '#4a4a4a',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+                  }}
+                >
                   VentAThought
                 </Typography>
 
@@ -468,7 +478,16 @@ export default function Home() {
                       <Avatar sx={{ width: 110, height: 110 }} src="/images/woman.png" />
                     </IconButton>
                   </Box>
-                  <Typography variant="h4" sx={{ mt: 2, fontWeight: 'bold' }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      mt: 2, 
+                      fontWeight: 'bold',
+                      fontFamily: "'Yatra One', cursive",
+                      fontSize: '2rem',
+                      color: '#4a4a4a',
+                    }}
+                  >
                     Hey, Venta!
                   </Typography>
                 </Box>
@@ -509,41 +528,44 @@ export default function Home() {
           mt: '50px',
           mx: '200px',
           mb: '25px',
+          height: 'calc(100vh - 100px)', // Adjust to match drawer height
         }}>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={endChat}
-              disabled={isChatLoading || isLoading}
-            >
-              End Chat
-            </Button>
-          </Box>
-
           <Paper sx={{ 
             flexGrow: 1, 
             display: 'flex', 
             flexDirection: 'column', 
             overflow: 'hidden',
-            height: 'calc(100vh - 200px)', // Adjust height to account for top margin and padding
-            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
-            backdropFilter: 'blur(10px)', // Add a blur effect
+            height: '100%', // Fill the entire height
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+            backdropFilter: 'blur(10px)', 
+            boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.1)', // Add shadow
           }}>
             <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
               {messages.map((message, index) => (
-                <Box key={index} sx={{ display: 'flex', mb: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                <Box key={index} sx={{ 
+                  display: 'flex', 
+                  mb: 2,
+                  justifyContent: message.role === "user" ? 'flex-end' : 'flex-start'
+                }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'flex-start', 
+                    gap: 2,
+                    flexDirection: message.role === "user" ? 'row-reverse' : 'row'
+                  }}>
                     {message.role === "assistant" ? (
-                      <Avatar>
-                        <SmartToyIcon />
-                      </Avatar>
+                      <Avatar sx={{ width: 60, height: 60 }} src={selectedAvatar === 'alloy' ? "/images/man.png" : "/images/woman.png"} />
                     ) : (
-                      <Avatar>
-                        <PersonIcon />
+                      <Avatar sx={{ width: 60, height: 60 }}>
+                        <PersonIcon sx={{ fontSize: 40 }} />
                       </Avatar>
                     )}
-                    <Box>
+                    <Box sx={{
+                      maxWidth: '70%',
+                      backgroundColor: message.role === "user" ? '#e3f2fd' : '#f5f5f5',
+                      borderRadius: 2,
+                      p: 2,
+                    }}>
                       {renderMessage(message)}
                     </Box>
                   </Box>
@@ -555,27 +577,44 @@ export default function Home() {
                 </Box>
               )}
             </Box>
-            <Box component="form" onSubmit={(e) => { e.preventDefault(); sendMessage(); }} sx={{ display: 'flex', p: 2 }}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Type your message..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                sx={{ mr: 1 }}
-              />
-              <IconButton
-                color="primary"
-                onClick={startListening}
-                disabled={isListening}
-              >
-                <MicIcon />
-              </IconButton>
-              <CustomButton
-                id="transitionButton"  
-                label="SEND" 
-                onClick={sendMessage} 
-              />
+            <Box sx={{ display: 'flex', flexDirection: 'column', p: 2, gap: 2 }}>
+              <Box component="form" onSubmit={(e) => { e.preventDefault(); sendMessage(); }} sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton
+                  color="primary"
+                  onClick={startListening}
+                  disabled={isListening}
+                  sx={{ mr: 2 }}
+                >
+                  <MicIcon />
+                </IconButton>
+                <TextField
+                  fullWidth
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  placeholder="Type your message..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  sx={{ mr: 5, flexGrow: 1, width: '75%' }} // Reduced width and right margin
+                />
+                <CustomButton
+                  id="transitionButton"  
+                  label="SEND" 
+                  onClick={sendMessage} 
+                  style={{ marginLeft: '-20px' }} // Moved button more to the left
+                />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={endChat}
+                  disabled={isChatLoading || isLoading}
+                  sx={{ width: '60%' }}
+                >
+                  End Chat
+                </Button>
+              </Box>
             </Box>
           </Paper>
         </Box>
