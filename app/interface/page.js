@@ -3,7 +3,7 @@
 import React from 'react';
 import styles from './interface.module.css';
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider } from "@mui/material";
+import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -16,7 +16,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import { Button as MuiButton } from "@mui/material"; // Add this import
+import { Button as MuiButton, CircularProgress } from "@mui/material"; // Add this import
 
 import { 
   Drawer, 
