@@ -6,6 +6,7 @@ import CustomButton from './CustomButton';
 import React from "react";
 import './gradient.css';
 import './circles.css';
+import { HideImageRounded } from "@mui/icons-material";
 
 
 
@@ -34,6 +35,7 @@ setTimeout(() => {
 
   return (
     // className="gradient"
+    // each li represents a ring
     <Box height='100%'>
       <ul class='ring'>
         <li></li>
@@ -46,19 +48,38 @@ setTimeout(() => {
         <li></li>
         <li></li>
         <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
       </ul>
 
-      <Box display="flex" justifyContent="center" alignItems="center" sx={{ gap: 2, height: '100vh' }}>
-        <Button color="inherit" href="/api/auth/logout">
-          Logout
-        </Button>
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
+      <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 1)', padding: 0, borderRadius: '50%', overflow: 'HideImageRounded'} } > {/* Added solid background */}
+              <Image
+                src="/images/venta.png" // Replace with your image path
+                alt="Venta logo" // Replace with your image description
+                width={150} // Set the desired width
+                height={150} // Set the desired height
+              />
+            </Box>
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ gap: 1 }}>
+          <Button color="inherit" href="/api/auth/logout">
+            Logout
+          </Button>
 
-        <CustomButton
-          id="transitionButton"  
-          label="Vent" 
-          onClick={handleClick} 
-        />
-
+          <CustomButton
+            id="transitionButton"  
+            label="Vent" 
+            onClick={handleClick} 
+          />
+        </Box>
       </Box>
 
 

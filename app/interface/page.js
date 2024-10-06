@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react';
+import styles from './interface.module.css';
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
@@ -14,10 +16,8 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import { Button as MuiButton } from "@mui/material"; // Add this import
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { CircularProgress } from "@mui/material";
-
+import { Button as MuiButton, CircularProgress } from "@mui/material"; // Add this import
 
 import { 
   Drawer, 
@@ -47,49 +47,12 @@ export default function Home() {
     ])
     const [message, setMessage ] = useState('')
     const [isChatLoading, setIsChatLoading] = useState(false)
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(true);
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
-    const [selectedVoice, setSelectedVoice] = useState('alloy');
-    const [voices, setVoices] = useState([]);
 
-    useEffect(() => {
-      async function fetchVoices() {
-        try {
-          const response = await fetch('/api/voices');
-          if (!response.ok) {
-            throw new Error('Failed to fetch voices');
-          }
-          const voicesData = await response.json();
-          setVoices(voicesData);
-          if (voicesData.length > 0) {
-            setSelectedVoice(voicesData[0].id);
-          }
-        } catch (error) {
-          console.error('Error fetching voices:', error);
-        }
-      }
-      fetchVoices();
-    }, []);
-
-    const theme = createTheme({
-      palette: {
-        mode: darkMode ? 'dark' : 'light',
-        background: {
-          default: darkMode ? '#121212' : '#f0f0f0',
-          paper: darkMode ? '#1e1e1e' : '#ffffff',
-        },
-        primary: {
-          main: darkMode ? '#90caf9' : '#1976d2',
-          light: darkMode ? '#4b5563' : '#e3f2fd',
-        },
-        secondary: {
-          main: darkMode ? '#f48fb1' : '#dc004e',
-          light: darkMode ? '#4a4a4a' : '#fce4ec',
-        },
-      },
-    });
+  
 
     const sendMessage = async (e) => {
       if (!message.trim()) return; 
@@ -265,7 +228,7 @@ export default function Home() {
         setIsListening(false);
       }
     };
-  
+  // end chat store the conversation to pinecone
     const endChat = async () => {
       console.log("End Chat clicked");
       if (isChatLoading || isLoading) {
@@ -320,9 +283,10 @@ export default function Home() {
     const toggleSidebar = () => setIsOpen(!isOpen);
 
     return (
-      <ThemeProvider theme={theme}>
+      <div className={styles.movingBackground}>
+      
         <CssBaseline />
-        <>
+      
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -356,7 +320,7 @@ export default function Home() {
           </List>
         </Box>
       </Drawer>
-    </>
+      
         <Box 
           sx={{
             width: "100vw",
@@ -420,25 +384,20 @@ export default function Home() {
                 >
                   <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start", maxWidth: "80%" }}>
                     {message.role === "assistant" && (
-                      <Avatar sx={{ bgcolor: "primary.main", mr: 1, mt: 1 }}>
+                      <Avatar sx={{ bgcolor: "purple", mr: 1, mt: 3 }}>
                         <SmartToyIcon />
                       </Avatar>
                     )}
-                    <Paper 
-                      elevation={1}
-                      sx={{
-                        p: 2,
-                        bgcolor: message.role === "assistant" ? "primary.light" : "secondary.light",
-                        color: theme.palette.getContrastText(message.role === "assistant" ? theme.palette.primary.light : theme.palette.secondary.light),
-                      }}
-                    >
+
+                    <div className={styles.message}>
                       {renderMessage(message)}
                       <IconButton size="small" onClick={() => copyToClipboard(message.content)}>
                         <ContentCopyIcon fontSize="small" />
                       </IconButton>
-                    </Paper>
+                    </div>
+
                     {message.role === "user" && (
-                      <Avatar sx={{ bgcolor: "secondary.main", ml: 1, mt: 1 }}>
+                      <Avatar sx={{ bgcolor: "teal", ml: 1, mt: 1 }}>
                         <PersonIcon />
                       </Avatar>
                     )}
@@ -479,6 +438,7 @@ export default function Home() {
             </Box>
           </Paper>
         </Box>
-      </ThemeProvider>
+      
+      </div>
     );
 }

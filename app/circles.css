@@ -30,10 +30,10 @@
 	width: 80px;
 	height: 80px;
 	animation-delay: 0s;
-	animation-duration: 20s;
+	animation-duration: 12s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgba(255, 255, 255); /* Increased transparency */
+	background: rgba(255, 255, 255,1); /* Increased transparency */
 }
 
 .ring li:nth-child(2) {
@@ -45,7 +45,7 @@
 	animation-duration: 25s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgb(255, 255, 255); /* Increased transparency */
+	background: rgb(255, 255, 255,1); /* Increased transparency */
 }
 
 .ring li:nth-child(3) {
@@ -57,7 +57,7 @@
 	border-radius: 50%;
     border: 5px rgb(255, 191, 0) solid;
 	/* border-top-left-radius: 0 !important; */
-	background: rgba(255, 255, 255); /* Increased transparency */
+	background: rgba(255, 255, 255,1); /* Increased transparency */
 }
 
 .ring li:nth-child(4) {
@@ -69,7 +69,7 @@
 	animation-duration: 15s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgb(255, 255, 255); /* Increased transparency */
+	background: rgb(255, 255, 255,1); /* Increased transparency */
 }
 
 .ring li:nth-child(5) {
@@ -77,11 +77,11 @@
 	width: 55px;
 	height: 55px;
 	animation-delay: 0s;
-	animation-duration: 20s;
+	animation-duration: 16s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
     border: 9px rgb(255, 102, 0) solid;
-	background: rgb(255, 255, 255); /* Increased transparency */
+	background: rgb(255, 255, 255,1); /* Increased transparency */
 }
 
 .ring li:nth-child(6) {
@@ -89,10 +89,10 @@
 	width: 90px;
 	height: 90px;
 	animation-delay: 0s;
-	animation-duration: 25s;
+	animation-duration: 18;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgb(255, 255, 255); /* Increased transparency */
+	background: rgb(255, 255, 255,1); /* Increased transparency */
     border: 15px rgb(0, 51, 153) solid;
 }
 
@@ -101,10 +101,10 @@
 	width: 50px;
 	height: 50px;
 	animation-delay: 0s;
-	animation-duration: 30s;
+	animation-duration: 27s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgb(255, 255, 255); /* Increased transparency */
+	background: rgb(255, 255, 255,1); /* Increased transparency */
     border: 8px rgb(204, 0, 0) solid;
 }
 
@@ -116,7 +116,7 @@
 	animation-duration: 35s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgb(255, 255, 255); /* Increased transparency */
+	background: rgb(255, 255, 255,1); /* Increased transparency */
     border: 25px rgb(0, 204, 102) solid;
 }
 
@@ -125,10 +125,10 @@
 	width: 45px;
 	height: 45px;
 	animation-delay: 0s;
-	animation-duration: 40s;
+	animation-duration: 33s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgba(255, 255, 255, 0.99); /* Increased transparency */
+	background: rgba(255, 255, 255,1); /* Increased transparency */
     border: 8px rgb(102, 0, 153) solid;
 }
 
@@ -140,7 +140,7 @@
 	animation-duration: 45s;
 	border-radius: 50%;
 	/* border-top-left-radius: 0 !important; */
-	background: rgba(255, 255, 255); /* Increased transparency */
+	background: rgba(255, 255, 255,1); /* Increased transparency */
     border: 8px rgb(255, 0, 0) solid;
 }
 
@@ -151,7 +151,7 @@
 	animation-delay: 0s;
 	animation-duration: 50s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.95);
+	background: rgba(255, 255, 255,1);
 	border: 7px rgb(0, 102, 204) solid;
 }
 
@@ -162,7 +162,7 @@
 	animation-delay: 0s;
 	animation-duration: 55s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.90);
+	background: rgba(255, 255, 255,1);
 	border: 10px rgb(255, 165, 0) solid;
 }
 
@@ -173,7 +173,7 @@
 	animation-delay: 0s;
 	animation-duration: 60s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.85);
+	background: rgba(255, 255, 255,1);
 	border: 5px rgb(0, 255, 0) solid;
 }
 
@@ -184,7 +184,7 @@
 	animation-delay: 0s;
 	animation-duration: 65s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.80);
+	background: rgba(255, 255, 255,1);
 	border: 20px rgb(255, 0, 255) solid;
 }
 
@@ -195,7 +195,7 @@
 	animation-delay: 0s;
 	animation-duration: 70s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.75);
+	background: rgba(255, 255, 255);
 	border: 10px rgb(0, 0, 255) solid;
 }
 
@@ -206,7 +206,7 @@
 	animation-delay: 0s;
 	animation-duration: 20s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.70);
+	background: rgba(255, 255, 255);
 	border: 9px rgb(255, 20, 147) solid;
 }
 
@@ -217,7 +217,7 @@
 	animation-delay: 0s;
 	animation-duration: 80s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.65);
+	background: rgba(255, 255, 255);
 	border: 9px rgb(128, 0, 128) solid;
 }
 
@@ -228,7 +228,7 @@
 	animation-delay: 0s;
 	animation-duration: 20s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.60);
+	background: rgba(255, 255, 255);
 	border: 10px rgb(255, 99, 71) solid;
 }
 
@@ -239,7 +239,7 @@
 	animation-delay: 0s;
 	animation-duration: 25s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.55);
+	background: rgba(255, 255, 255);
 	border: 22px rgb(0, 255, 255) solid;
 }
 
@@ -250,7 +250,7 @@
 	animation-delay: 0s;
 	animation-duration: 30s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.50);
+	background: rgba(255, 255, 255);
 	border: 12px rgb(255, 0, 0) solid;
 }
 
@@ -261,7 +261,7 @@
 	animation-delay: 0s;
 	animation-duration: 15s;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.80);
+	background: rgba(255, 255, 255);
 	border: 18px rgb(255, 0, 255) solid;
 }
 
