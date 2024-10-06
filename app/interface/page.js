@@ -32,6 +32,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 export default function Home() {
     const [currentURL, setCurrentURL] = useState('');
+    const { user, error, isLoading } = useUser();
 
     useEffect(() => {
         setCurrentURL(window.location.href);
@@ -44,7 +45,7 @@ export default function Home() {
       }
     ])
     const [message, setMessage ] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
+    const [isChatLoading, setIsChatLoading] = useState(false)
     const [darkMode, setDarkMode] = useState(true);
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
@@ -61,15 +62,20 @@ export default function Home() {
         { role: 'user', content: message },
         { role: 'assistant', content: '' },
       ])
+      setIsChatLoading(true)
 
       try {
+        console.log("")
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'URL': currentURL,
           },
-          body: JSON.stringify([...messages, { role: 'user', content: message }]),
+          body: JSON.stringify({
+            user_id: user ? user.sub : 'anonymous',
+            data: [...messages, { role: 'user', content: message }],
+          })
         });
 
         if (!response.ok) {
@@ -105,7 +111,7 @@ export default function Home() {
           },
         ])
       } finally {
-        setIsLoading(false)
+        setIsChatLoading(false)
       }
     }
 
@@ -133,22 +139,27 @@ export default function Home() {
 
     const synthesizeSpeech = async (text) => {
       try {
+        console.log('Synthesizing speech for:', text);
         const response = await fetch('/api/tts', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text, voice: selectedVoice }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const audioBlob = await response.blob();
+        console.log('Received audio blob:', audioBlob);
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
-        audio.play();
+        audio.onerror = (e) => console.error('Audio playback error:', e);
+        audio.onplay = () => console.log('Audio started playing');
+        audio.onended = () => console.log('Audio finished playing');
+        await audio.play();
       } catch (error) {
         console.error('Error synthesizing speech:', error);
       }
@@ -218,6 +229,20 @@ export default function Home() {
     };
   // end chat store the conversation to pinecone
     const endChat = async () => {
+      console.log("End Chat clicked");
+      if (isChatLoading || isLoading) {
+        console.log("Loading in progress, can't end chat");
+        return;
+      }
+      if (error) {
+        console.error('Error loading user:', error);
+        return;
+      }
+      if (!user) {
+        console.log('User not authenticated, ending chat anyway');
+        // You might want to handle this case differently
+      }
+
       const chatHistory = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
       
       try {
@@ -228,7 +253,7 @@ export default function Home() {
             'URL': currentURL,
           },
           body: JSON.stringify({
-            user_id: userId,
+            user_id: user ? user.sub : 'anonymous',
             chat_history: chatHistory,
           }),
         });
@@ -247,7 +272,6 @@ export default function Home() {
             content: `Hey there! What's on your mind today?`
           }
         ]);
-        setUserId(Math.random().toString(36).substr(2, 9));
       } catch (error) {
         console.error('Error ending chat:', error);
         alert('Failed to save chat history. Please try again.');
@@ -309,11 +333,24 @@ export default function Home() {
           <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5">VentAThought</Typography>
             <Box>
+              <FormControl variant="outlined" size="small" sx={{ mr: 2, minWidth: 120 }}>
+                <InputLabel id="voice-select-label">Voice</InputLabel>
+                <Select
+                  labelId="voice-select-label"
+                  value={selectedVoice}
+                  onChange={(e) => setSelectedVoice(e.target.value)}
+                  label="Voice"
+                >
+                  <MenuItem value="alloy">Alloy</MenuItem>
+                  <MenuItem value="nova">Nova</MenuItem>
+                </Select>
+              </FormControl>
               <MuiButton
                 variant="outlined"
                 color="secondary"
                 onClick={endChat}
                 sx={{ mr: 2 }}
+                disabled={isChatLoading || isLoading}
               >
                 End Chat
               </MuiButton>
@@ -366,7 +403,7 @@ export default function Home() {
                   </Box>
                 </Box>
               ))}
-              {isLoading && (
+              {isChatLoading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                   <CircularProgress />
                 </Box>
@@ -393,7 +430,7 @@ export default function Home() {
                 variant="contained" 
                 endIcon={<SendIcon />}
                 type="submit"
-                disabled={isLoading}
+                disabled={isChatLoading}
               >
                 Send
               </Button>
