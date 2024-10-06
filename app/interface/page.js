@@ -47,13 +47,11 @@ export default function Home() {
     ])
     const [message, setMessage ] = useState('')
     const [isChatLoading, setIsChatLoading] = useState(false)
-    const [darkMode, setDarkMode] = useState(true);
+    const [darkMode, setDarkMode] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const isMobile = useMediaQuery('(max-width:600px)');
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
     const [selectedVoice, setSelectedVoice] = useState('alloy');
-
-  
 
     const sendMessage = async (e) => {
       if (!message.trim()) return; 
