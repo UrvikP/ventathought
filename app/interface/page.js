@@ -1,5 +1,4 @@
 'use client'
-
 import React from 'react';
 import styles from './interface.module.css';
 import { useState, useEffect, useRef } from "react";
@@ -45,6 +44,7 @@ export default function Home() {
         content: `Hey there! What's on your mind today?`
       }
     ])
+    const [selectedVoice, setSelectedVoice] = useState('alloy'); // Add this line
     const [message, setMessage ] = useState('')
     const [isChatLoading, setIsChatLoading] = useState(false)
     const [darkMode, setDarkMode] = useState(true);

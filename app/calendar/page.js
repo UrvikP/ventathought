@@ -7,9 +7,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
-import { Box, styled } from '@mui/material';
+import { Box, Button, styled } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
+import DynamicRing from './dynamicRing/page';
+import './circles.css'
+import CustomButton from './CustomButton';
 
 
 
@@ -24,6 +27,7 @@ const StyledDateCalendar = styled(DateCalendar)({
       },
       '& div[role="row"]': {
         justifyContent: 'space-around',
+        margin:'10px 0'
       },
       '& .MuiDayCalendar-slideTransition': {
         minHeight: '500px',
@@ -65,20 +69,14 @@ function fakeFetch(date, { signal }) {
 // not necessary
 const initialValue = dayjs('2022-04-17');
 
-
-
-
-
-
 // ###################################
 
 function ServerDay(props) {
 const [open, setOpen] = React.useState(false);
 //const [selectedDate, setSelectedDate] = React.useState(null); // State to hold the selected date
-
+const color = 'rgba(255, 0, 0)';
 const handleClickOpen = () => {
-    
-    //setSelectedDate(date); // Set the selected date
+
     setOpen(true);
 };
 
@@ -103,6 +101,8 @@ const hasBadge = (date) => {
 
   return (
     <>
+    
+    {/* <span style={{ fontSize: '1.5rem' }}>🌚</span> */}
     <Badge
         anchorOrigin={{
         vertical: 'bottom',
@@ -110,10 +110,10 @@ const hasBadge = (date) => {
       }}  
       key={props.day.toString()}
       overlap="circular"
-      badgeContent={isSelected ? <span style={{ fontSize: '1.5rem' }}>🌚</span> : undefined} // Increased font size
+      badgeContent={isSelected ? <DynamicRing size={18} thickness={9} rgbColor={color} value={100} /> : undefined} // Updated to use DynamicRing as badge
     >
       <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} onClick={handleClick} />
-      
+
     </Badge>
     <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Your mood on this day...</DialogTitle>
@@ -126,7 +126,6 @@ const hasBadge = (date) => {
 }
 
 export default function DateCalendarServerRequest() {
-    
 
   const requestAbortController = React.useRef(null);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -157,12 +156,20 @@ export default function DateCalendarServerRequest() {
     return () => requestAbortController.current?.abort();
   }, []);
 
+
+  const handleButtonClick = () => {
+    // Add your click handling logic here
+    console.log("Button clicked!");
+setTimeout(() => {
+  window.location.href = './interface';
+}, 1000); // 1000 milliseconds = 1 seconds
+  };
   const handleMonthChange = (date) => {
     if (requestAbortController.current) {
-      // make sure that you are aborting useless requests
-      // because it is possible to switch between months pretty quickly
       requestAbortController.current.abort();
     }
+
+    
 
     setIsLoading(true);
     setHighlightedDays([]);
@@ -171,7 +178,16 @@ export default function DateCalendarServerRequest() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <React.Fragment>
+      <Box height='100%'>
+      <Box mt={2} ml ={2}>
+      <CustomButton
+            id="transitionButton"  
+            label="Go Back" 
+            onClick={handleButtonClick} 
+          />
+    </Box>  
+
+
       <Box 
       display="flex" 
       justifyContent="center" 
@@ -180,9 +196,19 @@ export default function DateCalendarServerRequest() {
       mt={4}
       
     > 
+
+
+    <ul class='ring'>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
     <Box 
         sx={{ 
-          backgroundColor: 'rgba(255, 255, 255, 0.8)', // White with 80% opacity
+          backgroundColor: 'rgba(255, 255, 255)', // White with 80% opacity
           borderRadius: '8px', // Rounded corners
           padding: '8px', // Padding around the calendar
           boxShadow: 3, // Add some shadow for visibility
@@ -207,7 +233,8 @@ export default function DateCalendarServerRequest() {
       />
       </Box>
       </Box>
-      </React.Fragment>   
+      </Box>  
+ 
     </LocalizationProvider>
   );
 }
