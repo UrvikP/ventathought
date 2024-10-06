@@ -67,6 +67,44 @@ const generateRandomPosition = (max) => {
   return Math.floor(Math.random() * max);
 };
 
+const PastEntriesDrawer = () => {
+  const router = useRouter();
+
+  return (
+    <Box
+      sx={{
+        position: 'fixed',
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        width: '60px', // Adjust width as needed
+        height: '200px', // Adjust height as needed
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
+        borderRadius: '0 20px 20px 0', // Rounded edges
+        boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.1)', // Optional shadow
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        background: 'linear-gradient(to bottom, #f5e6d3, #e6d0b3)'
+      }}
+      onClick={() => router.push('/calendar')} // Navigate to calendar page on click
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          fontFamily: "'Yatra One', cursive",
+          transform: 'rotate(-90deg)', // Rotate text 90 degrees counterclockwise
+          whiteSpace: 'nowrap', // Prevent text wrapping
+          color: '#4a4a4a', // Adjust color as needed
+        }}
+      >
+        Past entries
+      </Typography>
+    </Box>
+  );
+};
+
 export default function Home() {
     const [currentURL, setCurrentURL] = useState('');
     const { user, error, isLoading } = useUser();
@@ -618,6 +656,9 @@ export default function Home() {
             </Box>
           </Paper>
         </Box>
+
+        {/* Add the PastEntriesDrawer component */}
+        <PastEntriesDrawer />
       </Box>
     );
 }
