@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider } from "@mui/material";
+import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -15,6 +15,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { Button as MuiButton } from "@mui/material"; // Add this import
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { CircularProgress } from "@mui/material";
+
 
 import { 
   Drawer, 
@@ -375,8 +378,8 @@ export default function Home() {
                   onChange={(e) => setSelectedVoice(e.target.value)}
                   label="Voice"
                 >
-                  <MenuItem value="alloy">Alloy</MenuItem>
-                  <MenuItem value="nova">Nova</MenuItem>
+                  <MenuItem value="alloy">Vent</MenuItem>
+                  <MenuItem value="nova">Venta</MenuItem>
                 </Select>
               </FormControl>
               <MuiButton
