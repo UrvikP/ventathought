@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
@@ -12,7 +12,6 @@ import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Button as MuiButton, CircularProgress } from "@mui/material";
 import { 
   Drawer, 
   List, 
@@ -29,6 +28,44 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ManIcon from '@mui/icons-material/Man';
 import WomanIcon from '@mui/icons-material/Woman';
+import { keyframes } from '@mui/system';
+import "../CustomButton.css";
+import CustomButton from '../CustomButton'; // Make sure the import path is correct
+
+const fallAnimation = keyframes`
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+`;
+
+const DynamicRing = ({ size, thickness, rgbColor, value, animationDuration }) => {
+  return (
+    <Box sx={{ 
+      position: 'relative', 
+      display: 'inline-flex', 
+      m: 1,
+      animation: `${fallAnimation} ${animationDuration}s linear infinite`,
+    }}>
+      <CircularProgress
+        variant="determinate"
+        value={value}
+        size={size}
+        thickness={thickness}
+        sx={{
+          color: rgbColor,
+          opacity: '75%',
+        }}
+      />
+    </Box>
+  );
+};
+
+const generateRandomPosition = (max) => {
+  return Math.floor(Math.random() * max);
+};
 
 export default function Home() {
     const [currentURL, setCurrentURL] = useState('');
@@ -50,6 +87,7 @@ export default function Home() {
     const [isListening, setIsListening] = useState(false);
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
     const [selectedVoice, setSelectedVoice] = useState('alloy');
+    const [selectedAvatar, setSelectedAvatar] = useState('alloy');
 
     const sendMessage = async (e) => {
       if (!message.trim()) return; 
@@ -282,107 +320,205 @@ export default function Home() {
         router.push('/'); // Redirect to page.js
     };
 
+    const generateRandomColor = () => {
+      return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+    };
+
+    const generateRandomSize = () => {
+      return Math.floor(Math.random() * (80 - 20 + 1)) + 20; // Random size between 20 and 80
+    };
+
+    const generateRings = (count) => {
+      const rings = [];
+      const drawerWidth = 380;
+
+      for (let i = 0; i < count; i++) {
+        const ring = {
+          size: generateRandomSize(),
+          color: generateRandomColor(),
+          value: Math.floor(Math.random() * 101), // Random value between 0 and 100
+          left: generateRandomPosition(drawerWidth),
+          animationDuration: Math.random() * 10 + 5, // Random duration between 5 and 15 seconds
+        };
+
+        rings.push(ring);
+      }
+      return rings;
+    };
+
+    const rings = generateRings(20); // Generate 20 rings
+
     return (
-      <Box sx={{ display: 'flex', height: '100vh' }}>
+      <Box sx={{ 
+        display: 'flex', 
+        height: '100vh',
+        background: 'linear-gradient(to bottom right, #e6f7ff, #b3e0ff)', // Light blue gradient
+      }}>
         <CssBaseline />
       
+        {/* Sidebar */}
         <Box sx={{ 
           position: 'fixed', 
           left: 50, 
           top: 50, 
           bottom: 50, 
-          width: 380, 
+          width: 380,
           zIndex: 1200,
-          boxShadow: 6, // Add shadow
-          borderRadius: 2, // Optional: rounds the corners
-          overflow: 'hidden' // Ensures content doesn't overflow rounded corners
+          boxShadow: 6,
+          borderRadius: 2,
+          overflow: 'hidden',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
         }}>
           <Drawer
             variant="permanent"
             sx={{
-              width: 380,
+              width: '100%',
+              height: '100%',
               flexShrink: 0,
               '& .MuiDrawer-paper': {
                 width: 380,
                 boxSizing: 'border-box',
                 position: 'static',
                 height: '100%',
-                borderRadius: 2, // Match the parent's border radius
+                borderRadius: 2,
+                overflow: 'hidden',
+                backgroundColor: 'transparent', // Make drawer background transparent
               },
             }}
           >
-            <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h6" sx={{ p: 2 }}>
-                VentAThought
-              </Typography>
-
-              {/* MAHI */}
-              {/* Large avatars */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <IconButton onClick={() => { setSelectedVoice('alloy'); console.log('Man avatar clicked'); }} sx={{ '&:hover': { boxShadow: 3 } }}>
-                <Avatar sx={{ width: 110, height: 110}} src="/images/man.png" />
-              </IconButton>
-              <IconButton onClick={() => { setSelectedVoice('nova'); console.log('Woman avatar clicked'); }} sx={{ '&:hover': { boxShadow: 3 } }}>
-                <Avatar sx={{ width: 110, height: 110 }} src="/images/woman.png" />
-              </IconButton>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+              {/* Dynamic Rings */}
+              <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 0,
+                pointerEvents: 'none',
+                overflow: 'hidden',
+                background: 'linear-gradient(to bottom, #f5e6d3, #e6d0b3)', // Light beige gradient top to bottom
+              }}>
+                {rings.map((ring, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      position: 'absolute',
+                      left: ring.left,
+                      top: -ring.size, // Start above the container
+                    }}
+                  >
+                    <DynamicRing
+                      size={ring.size}
+                      thickness={Math.min(8, ring.size / 6)}
+                      rgbColor={ring.color}
+                      value={100}
+                      animationDuration={ring.animationDuration}
+                    />
+                  </Box>
+                ))}
               </Box>
 
-              <List>
-                {['Item 1', 'Item 2', 'Item 3'].map((text, index) => (
-                  <ListItem button key={text}>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                ))}
-              </List>
-              
-              {/* Theme toggle and logout */}
-              <Box sx={{ marginTop: 'auto', p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
-                    {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-                  </IconButton>
-                  <Typography variant="body2">
-                    {darkMode ? 'Light Mode' : 'Dark Mode'}
+              {/* Foreground content */}
+              <Box sx={{ 
+                position: 'relative', 
+                zIndex: 1, 
+                height: '100%', 
+                display: 'flex', 
+                flexDirection: 'column',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
+              }}>
+                <Typography variant="h6" sx={{ p: 2 }}>
+                  VentAThought
+                </Typography>
+
+                {/* Updated avatars section */}
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  my: 4,
+                  backgroundColor: 'linear-gradient(to bottom, #f5e6d3, #e6d0b3)', // Semi-transparent white background
+                }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <IconButton 
+                      onClick={() => { 
+                        setSelectedVoice('alloy'); 
+                        setSelectedAvatar('alloy');
+                      }} 
+                      sx={{ 
+                        '&:hover': { boxShadow: 3 },
+                        boxShadow: selectedAvatar === 'alloy' ? 3 : 0,
+                        backgroundColor: 'white', // Add solid background
+                      }}
+                    >
+                      <Avatar sx={{ width: 110, height: 110}} src="/images/man.png" />
+                    </IconButton>
+                    <IconButton 
+                      onClick={() => { 
+                        setSelectedVoice('nova'); 
+                        setSelectedAvatar('nova');
+                      }} 
+                      sx={{ 
+                        '&:hover': { boxShadow: 3 },
+                        boxShadow: selectedAvatar === 'nova' ? 3 : 0,
+                        backgroundColor: 'white', // Add solid background
+                      }}
+                    >
+                      <Avatar sx={{ width: 110, height: 110 }} src="/images/woman.png" />
+                    </IconButton>
+                  </Box>
+                  <Typography variant="h4" sx={{ mt: 2, fontWeight: 'bold' }}>
+                    Hey, Venta!
                   </Typography>
                 </Box>
-                <IconButton onClick={handleLogout} color="inherit">
-                  <LogoutIcon />
-                </IconButton>
+              
+                {/* Theme toggle and logout */}
+                <Box sx={{ 
+                  p: 2, 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  backgroundColor: 'white', // Add solid background
+                  marginTop: 'auto', // Push to bottom
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
+                      {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+                    </IconButton>
+                    <Typography variant="body2">
+                      {darkMode ? 'Light Mode' : 'Dark Mode'}
+                    </Typography>
+                  </Box>
+                  <IconButton onClick={handleLogout} color="inherit">
+                    <LogoutIcon />
+                  </IconButton>
+                </Box>
               </Box>
             </Box>
           </Drawer>
         </Box>
 
+        {/* Main content area */}
         <Box component="main" sx={{ 
           flexGrow: 1, 
           p: 3, 
           pl: '430px', 
           display: 'flex', 
-          flexDirection: 'column',
-          mt: '50px', // Add top margin
-          mx: '200px', // Add horizontal margin
+          flexDirection: 'column', 
+          mt: '50px',
+          mx: '200px',
+          mb: '25px',
         }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <FormControl variant="outlined" size="small">
-              <InputLabel id="voice-select-label">Voice</InputLabel>
-              <Select
-                labelId="voice-select-label"
-                value={selectedVoice}
-                onChange={(e) => setSelectedVoice(e.target.value)}
-                label="Voice"
-              >
-                <MenuItem value="alloy">Vent</MenuItem>
-                <MenuItem value="nova">Venta</MenuItem>
-              </Select>
-            </FormControl>
-            <MuiButton
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+            <Button
               variant="outlined"
               color="secondary"
               onClick={endChat}
               disabled={isChatLoading || isLoading}
             >
               End Chat
-            </MuiButton>
+            </Button>
           </Box>
 
           <Paper sx={{ 
@@ -391,6 +527,8 @@ export default function Home() {
             flexDirection: 'column', 
             overflow: 'hidden',
             height: 'calc(100vh - 200px)', // Adjust height to account for top margin and padding
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
+            backdropFilter: 'blur(10px)', // Add a blur effect
           }}>
             <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
               {messages.map((message, index) => (
@@ -433,14 +571,11 @@ export default function Home() {
               >
                 <MicIcon />
               </IconButton>
-              <Button 
-                variant="contained" 
-                endIcon={<SendIcon />}
-                type="submit"
-                disabled={isChatLoading}
-              >
-                Send
-              </Button>
+              <CustomButton
+                id="transitionButton"  
+                label="SEND" 
+                onClick={sendMessage} 
+              />
             </Box>
           </Paper>
         </Box>
