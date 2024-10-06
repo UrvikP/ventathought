@@ -16,6 +16,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme } from '@mui/material/styles';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import { useUser } from "@auth0/nextjs-auth0/client";
 import { Button as MuiButton, CircularProgress } from "@mui/material"; // Add this import
 
 import { 
@@ -341,8 +342,8 @@ export default function Home() {
                   onChange={(e) => setSelectedVoice(e.target.value)}
                   label="Voice"
                 >
-                  <MenuItem value="alloy">Alloy</MenuItem>
-                  <MenuItem value="nova">Nova</MenuItem>
+                  <MenuItem value="alloy">Vent</MenuItem>
+                  <MenuItem value="nova">Venta</MenuItem>
                 </Select>
               </FormControl>
               <MuiButton
