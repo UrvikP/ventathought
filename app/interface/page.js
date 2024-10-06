@@ -49,7 +49,7 @@ export default function Home() {
     const [darkMode, setDarkMode] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [userId, setUserId] = useState(Math.random().toString(36).substr(2, 9)); // Add this line
-    //const [selectedVoice, setSelectedVoice] = useState('alloy');
+    const [selectedVoice, setSelectedVoice] = useState('alloy');
 
     const sendMessage = async (e) => {
       if (!message.trim()) return; 
@@ -315,15 +315,16 @@ export default function Home() {
               <Typography variant="h6" sx={{ p: 2 }}>
                 VentAThought
               </Typography>
-              
+
+              {/* MAHI */}
               {/* Large avatars */}
               <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-                <Avatar sx={{ width: 80, height: 80, mr: 2 }}>
-                  <ManIcon sx={{ fontSize: 60 }} />
-                </Avatar>
-                <Avatar sx={{ width: 80, height: 80 }}>
-                  <WomanIcon sx={{ fontSize: 60 }} />
-                </Avatar>
+              <IconButton onClick={() => { setSelectedVoice('alloy'); console.log('Man avatar clicked'); }} sx={{ '&:hover': { boxShadow: 3 } }}>
+                <Avatar sx={{ width: 110, height: 110}} src="/images/man.png" />
+              </IconButton>
+              <IconButton onClick={() => { setSelectedVoice('nova'); console.log('Woman avatar clicked'); }} sx={{ '&:hover': { boxShadow: 3 } }}>
+                <Avatar sx={{ width: 110, height: 110 }} src="/images/woman.png" />
+              </IconButton>
               </Box>
 
               <List>
