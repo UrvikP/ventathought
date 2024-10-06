@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Typography, Paper, Avatar, IconButton, TextField, Button, Switch, CssBaseline, ThemeProvider, FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mui/material";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
@@ -12,7 +12,6 @@ import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { Button as MuiButton, CircularProgress } from "@mui/material";
 import { 
   Drawer, 
   List, 
@@ -29,6 +28,26 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ManIcon from '@mui/icons-material/Man';
 import WomanIcon from '@mui/icons-material/Woman';
+
+const DynamicRing = ({ size, thickness, rgbColor, value }) => {
+  return (
+    <Box sx={{ position: 'relative', display: 'inline-flex', m: 1 }}>
+      <CircularProgress
+        variant="determinate"
+        value={value}
+        size={size}
+        thickness={thickness}
+        sx={{
+          color: rgbColor,
+        }}
+      />
+    </Box>
+  );
+};
+
+const generateRandomPosition = (max, size) => {
+  return Math.floor(Math.random() * (max - size));
+};
 
 export default function Home() {
     const [currentURL, setCurrentURL] = useState('');
@@ -282,6 +301,54 @@ export default function Home() {
         router.push('/'); // Redirect to page.js
     };
 
+    const generateRandomColor = () => {
+      return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+    };
+
+    const generateRandomSize = () => {
+      return Math.floor(Math.random() * (80 - 20 + 1)) + 20; // Random size between 20 and 80
+    };
+
+    const generateRings = (count) => {
+      const rings = [];
+      const occupiedSpaces = [];
+      const drawerWidth = 380;
+      const drawerHeight = 680; // Approximate height, adjust if needed
+
+      for (let i = 0; i < count; i++) {
+        let ring;
+        let overlapping;
+        do {
+          overlapping = false;
+          ring = {
+            size: generateRandomSize(),
+            color: generateRandomColor(),
+            value: Math.floor(Math.random() * 101), // Random value between 0 and 100
+            top: generateRandomPosition(drawerHeight, ring?.size || 0),
+            left: generateRandomPosition(drawerWidth, ring?.size || 0),
+          };
+
+          // Check for overlap with existing rings
+          for (const occupiedSpace of occupiedSpaces) {
+            const distance = Math.sqrt(
+              Math.pow(ring.left - occupiedSpace.left, 2) +
+              Math.pow(ring.top - occupiedSpace.top, 2)
+            );
+            if (distance < (ring.size / 2 + occupiedSpace.size / 2)) {
+              overlapping = true;
+              break;
+            }
+          }
+        } while (overlapping);
+
+        rings.push(ring);
+        occupiedSpaces.push(ring);
+      }
+      return rings;
+    };
+
+    const rings = generateRings(20); // Generate 20 non-overlapping rings
+
     return (
       <Box sx={{ display: 'flex', height: '100vh' }}>
         <CssBaseline />
@@ -293,9 +360,9 @@ export default function Home() {
           bottom: 50, 
           width: 380, 
           zIndex: 1200,
-          boxShadow: 6, // Add shadow
-          borderRadius: 2, // Optional: rounds the corners
-          overflow: 'hidden' // Ensures content doesn't overflow rounded corners
+          boxShadow: 6,
+          borderRadius: 2,
+          overflow: 'hidden'
         }}>
           <Drawer
             variant="permanent"
@@ -307,17 +374,37 @@ export default function Home() {
                 boxSizing: 'border-box',
                 position: 'static',
                 height: '100%',
-                borderRadius: 2, // Match the parent's border radius
+                borderRadius: 2,
               },
             }}
           >
-            <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h6" sx={{ p: 2 }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+              {/* Dynamic Rings */}
+              {rings.map((ring, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    position: 'absolute',
+                    top: ring.top,
+                    left: ring.left,
+                    zIndex: 0,
+                  }}
+                >
+                  <DynamicRing
+                    size={ring.size}
+                    thickness={Math.min(8, ring.size / 6)}
+                    rgbColor={ring.color}
+                    value={100}
+                  />
+                </Box>
+              ))}
+
+              <Typography variant="h6" sx={{ p: 2, position: 'relative', zIndex: 1 }}>
                 VentAThought
               </Typography>
               
               {/* Large avatars */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4, position: 'relative', zIndex: 1 }}>
                 <Avatar sx={{ width: 80, height: 80, mr: 2 }}>
                   <ManIcon sx={{ fontSize: 60 }} />
                 </Avatar>
@@ -326,7 +413,7 @@ export default function Home() {
                 </Avatar>
               </Box>
 
-              <List>
+              <List sx={{ flexGrow: 1, position: 'relative', zIndex: 1 }}>
                 {['Item 1', 'Item 2', 'Item 3'].map((text, index) => (
                   <ListItem button key={text}>
                     <ListItemText primary={text} />
@@ -335,7 +422,7 @@ export default function Home() {
               </List>
               
               {/* Theme toggle and logout */}
-              <Box sx={{ marginTop: 'auto', p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
                     {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
@@ -374,14 +461,14 @@ export default function Home() {
                 <MenuItem value="nova">Venta</MenuItem>
               </Select>
             </FormControl>
-            <MuiButton
+            <Button
               variant="outlined"
               color="secondary"
               onClick={endChat}
               disabled={isChatLoading || isLoading}
             >
               End Chat
-            </MuiButton>
+            </Button>
           </Box>
 
           <Paper sx={{ 
